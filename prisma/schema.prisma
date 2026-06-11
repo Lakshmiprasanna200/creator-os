@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  niche         String?
+  createdAt     DateTime  @default(now())
+
+  accounts       Account[]
+  sessions       Session[]
+  ideas          Idea[]
+  contentPieces  ContentPiece[]
+  calendarEvents CalendarEntry[]
+  goals          Goal[]
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  refresh_token_expires_in Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Idea {
+  id        String   @id @default(cuid())
+  title     String
+  angle     String?
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  contentPieces ContentPiece[]
+}
+
+model ContentPiece {
+  id        String   @id @default(cuid())
+  platform  String
+  type      String
+  body      String   @db.Text
+  tone      String?
+  createdAt DateTime @default(now())
+
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  ideaId        String?
+  idea          Idea?          @relation(fields: [ideaId], references: [id])
+  calendarEntry CalendarEntry?
+}
+
+model CalendarEntry {
+  id          String   @id @default(cuid())
+  scheduledAt DateTime
+  status      String   @default("draft")
+  platform    String
+  createdAt   DateTime @default(now())
+
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  contentId    String       @unique
+  contentPiece ContentPiece @relation(fields: [contentId], references: [id])
+}
+
+model Goal {
+  id         String   @id @default(cuid())
+  title      String
+  target     String
+  deadline   DateTime
+  progress   Int      @default(0)
+  milestones Json?
+  createdAt  DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
