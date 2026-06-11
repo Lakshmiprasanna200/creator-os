@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 Creator OS
 
-## Getting Started
+> An AI-powered content workspace built for YouTube creators — from idea to published, all in one place.
 
-First, run the development server:
+![Creator OS Banner](https://placehold.co/1200x400/0a0a0f/a855f7?text=Creator+OS+—+AI+Content+Workspace)
+
+---
+
+## 📌 Overview
+
+**Creator OS** is a full-stack SaaS application that helps YouTube creators streamline their content workflow using AI. Generate scripts with a single prompt, repurpose content across platforms, analyze competitors, and manage your content calendar — all from one dark-themed, creator-focused dashboard.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🧠 **Idea Engine** | AI-generated video ideas based on your niche and trending topics |
+| ✍️ **Script Writer** | Full YouTube scripts generated via Groq (LLaMA 3.3 70B) in seconds |
+| 🔄 **Repurpose Studio** | Turn scripts into Twitter threads, LinkedIn posts, and email newsletters |
+| 📅 **Content Calendar** | Plan and schedule your content with a visual calendar |
+| 📊 **Analytics** | Track views, engagement, and growth using YouTube Data API |
+| 🔍 **Competitor Analysis** | Analyze competitor channels and uncover content gaps |
+
+---
+
+## 🛠 Tech Stack
+
+**Frontend**
+- [Next.js 14](https://nextjs.org/) (App Router)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/) (Nova theme)
+
+**Backend**
+- [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
+- [NextAuth.js](https://next-auth.js.org/) (Google OAuth)
+- [Prisma v5.22](https://www.prisma.io/) ORM
+- [PostgreSQL](https://www.postgresql.org/)
+
+**AI & APIs**
+- [Groq API](https://groq.com/) — LLaMA 3.3 70B for script generation
+- [YouTube Data API v3](https://developers.google.com/youtube/v3) — Channel analytics
+
+**Deployment**
+- [Vercel](https://vercel.com/) (Frontend + API)
+- [Neon](https://neon.tech/) / [Supabase](https://supabase.com/) (PostgreSQL)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL database (local or cloud)
+- Google Cloud project with OAuth 2.0 credentials
+- Groq API key
+- YouTube Data API v3 key
+
+### 1. Clone the repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/YOUR_USERNAME/creator-os.git
+cd creator-os
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Set up environment variables
 
-## Learn More
+Create a `.env.local` file in the root directory:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/creator_os"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# NextAuth
+NEXTAUTH_SECRET="your-secret-here"
+NEXTAUTH_URL="http://localhost:3000"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Google OAuth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
-## Deploy on Vercel
+# AI
+GROQ_API_KEY="your-groq-api-key"
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# YouTube
+YOUTUBE_API_KEY="your-youtube-api-key"
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Set up the database
+
+```powershell
+npx prisma generate
+npx prisma db push
+```
+
+### 5. Run the development server
+
+```powershell
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📁 Project Structure
+
+```
+creator-os/
+├── app/
+│   ├── api/
+│   │   ├── auth/          # NextAuth handlers
+│   │   ├── scripts/       # Script generation & management
+│   │   └── youtube/       # YouTube Data API
+│   ├── dashboard/         # Protected dashboard pages
+│   ├── login/             # Auth page
+│   └── page.tsx           # Landing page
+├── components/
+│   ├── ui/                # shadcn/ui components
+│   └── dashboard/         # Dashboard-specific components
+├── lib/
+│   ├── auth.ts            # NextAuth config
+│   ├── prisma.ts          # Prisma client
+│   └── groq.ts            # Groq API client
+├── prisma/
+│   └── schema.prisma      # Database schema
+├── proxy.ts               # Route protection (replaces middleware)
+└── .env.local             # Environment variables
+```
+
+---
+
+## 🔐 Auth Notes
+
+- Authentication is handled by **NextAuth.js** with Google OAuth provider.
+- Route protection uses `proxy.ts` (instead of `middleware.ts`) for Next.js 16 compatibility.
+- Protected routes: `/dashboard/*`
+
+---
+
+## 🌐 Deployment (Vercel)
+
+1. Push your code to GitHub
+2. Import the repo at [vercel.com/new](https://vercel.com/new)
+3. Add all environment variables from `.env.local`
+4. Update `NEXTAUTH_URL` to your Vercel deployment URL
+5. Deploy!
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
+
+---
+
+## 📄 License
+
+[MIT](LICENSE)
+
+---
